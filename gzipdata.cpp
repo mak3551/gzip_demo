@@ -1,6 +1,6 @@
 #include "gzipdata.h"
 
-GzipData::GzipData() : decompressor(std::nullopt) {}
+GzipData::GzipData() : decompressor(std::nullopt), read_completed_flag(false) {}
 
 GzipData::~GzipData() {
     if (decompressor.has_value()) {
@@ -9,6 +9,7 @@ GzipData::~GzipData() {
 }
 
 GzipData::ErrorCode GzipData::readFile(const std::string& filename) {
+    read_completed_flag = false;
     std::ifstream gzip_file(filename, std::ios::binary);
     if (!gzip_file) {
         return ErrorCode::FILE_OPEN_ERROR;
@@ -71,9 +72,13 @@ GzipData::ErrorCode GzipData::readFile(const std::string& filename) {
         return ErrorCode::READ_ERROR;
     }
     gzip_file.close();
+    read_completed_flag = true;
     return ErrorCode::SUCCESS;
 }
 bool GzipData::decompress(std::vector<std::byte>& decompressed_data) {
+    if(!read_completed_flag){
+        return false;
+    }
     decompressed_data.clear();
     uint32_t original_size = 0;
     if (isize.size() == 4) {
@@ -103,5 +108,9 @@ bool GzipData::readByte(std::ifstream& stream, std::byte& byte) {
 bool GzipData::readBytes(std::ifstream& stream, std::byte* bytes, std::size_t size) {
     stream.read(reinterpret_cast<char*>(bytes), size);
     return stream.good();
+}
+
+bool GzipData::read_completed(){
+    return read_completed_flag;
 }
 

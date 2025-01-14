@@ -31,6 +31,7 @@ class GzipData {
         ErrorCode readFile(const std::string& filename);
         bool decompress(std::vector<std::byte>& decompressed_data);
         void initialize_decompressor();
+        bool read_completed();
     private:
         bool readByte(std::ifstream& stream, std::byte& byte);
         bool readBytes(std::ifstream& stream, std::byte* bytes, std::size_t size);
@@ -47,5 +48,6 @@ class GzipData {
         std::array<std::byte, 4> crc32;
         std::array<std::byte, 4> isize;
         std::optional<struct libdeflate_decompressor*> decompressor;
+        bool read_completed_flag;
 };
 #endif
