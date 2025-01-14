@@ -75,9 +75,9 @@ GzipData::ErrorCode GzipData::readFile(const std::string& filename) {
     read_completed_flag = true;
     return ErrorCode::SUCCESS;
 }
-bool GzipData::decompress(std::vector<std::byte>& decompressed_data) {
+GzipData::ErrorCode GzipData::decompress(std::vector<std::byte>& decompressed_data) {
     if(!read_completed_flag){
-        return false;
+        return ErrorCode::READ_UNCOMPLETE;
     }
     decompressed_data.clear();
     uint32_t original_size = 0;
@@ -87,11 +87,11 @@ bool GzipData::decompress(std::vector<std::byte>& decompressed_data) {
     decompressed_data.resize(original_size);
     initialize_decompressor();
     enum libdeflate_result result = libdeflate_deflate_decompress(decompressor.value(),compressed_data.data(),compressed_data.size(),
-    decompressed_data.data(),original_size,NULL);
+        decompressed_data.data(),original_size,NULL);
     if(result == LIBDEFLATE_SUCCESS){
-        return true;
+        return ErrorCode::SUCCESS;
     }else{
-        return false;
+        return ErrorCode::DECOMPRESS_ERROR;
     }
 }
 void GzipData::initialize_decompressor() {

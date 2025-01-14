@@ -15,7 +15,8 @@ int main(int argc, char* argv[]) {
         return 2;
     }
     std::vector<std::byte> decompressed_data;
-    if(!gzip_data.decompress(decompressed_data)) {
+    GzipData::ErrorCode decompress_status = gzip_data.decompress(decompressed_data);
+    if(decompress_status != GzipData::ErrorCode::SUCCESS) {
         std::cerr << "Error occurred when decompressing data." << std::endl;
         return 3;
     }

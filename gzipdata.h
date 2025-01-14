@@ -26,15 +26,17 @@ class GzipData {
             FILE_OPEN_ERROR = 1,
             INVALID_ID = 2,
             UNSUPPORTED_EXTRA_FIELD = 3,
-            READ_ERROR = 4
+            READ_ERROR = 4,
+            READ_UNCOMPLETE = 5,
+            DECOMPRESS_ERROR = 6
         };
         ErrorCode readFile(const std::string& filename);
-        bool decompress(std::vector<std::byte>& decompressed_data);
+        ErrorCode decompress(std::vector<std::byte>& decompressed_data);
         void initialize_decompressor();
-        bool read_completed();
     private:
         bool readByte(std::ifstream& stream, std::byte& byte);
         bool readBytes(std::ifstream& stream, std::byte* bytes, std::size_t size);
+        bool read_completed();
         std::byte id1;
         std::byte id2;
         std::byte cm;
