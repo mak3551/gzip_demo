@@ -1,4 +1,5 @@
 #include "gzipdata.h"
+#include <cstdint>
 
 GzipData::GzipData() : decompressor(std::nullopt), read_completed_flag(false) {}
 
@@ -15,7 +16,7 @@ GzipData::ErrorCode GzipData::readFile(const std::string& filename) {
         return ErrorCode::FILE_OPEN_ERROR;
     }
     
-    long filesize = std::filesystem::file_size(filename);
+    uint64_t filesize = std::filesystem::file_size(filename);
     int headersize = HEADER_SIZE_BASIC;
 
     if (!readByte(gzip_file, id1)){
@@ -63,7 +64,7 @@ GzipData::ErrorCode GzipData::readFile(const std::string& filename) {
         }
         headersize += 2;
     }
-    long compressed_data_size = filesize - headersize - 8;
+    uint64_t compressed_data_size = filesize - headersize - 8;
     compressed_data.resize(compressed_data_size);
     if (!readBytes(gzip_file, compressed_data.data(), compressed_data_size)) {
         return ErrorCode::READ_ERROR;
