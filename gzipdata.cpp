@@ -1,10 +1,10 @@
 #include "gzipdata.h"
 
-GzipData::GzipData() : decompressor(nullptr) {}
+GzipData::GzipData() : decompressor(std::nullopt) {}
 
 GzipData::~GzipData() {
-    if (decompressor) {
-        libdeflate_free_decompressor(decompressor);
+    if (decompressor.has_value()) {
+        libdeflate_free_decompressor(decompressor.value());
     }
 }
 
@@ -81,7 +81,7 @@ bool GzipData::decompress(std::vector<std::byte>& decompressed_data) {
     }
     decompressed_data.resize(original_size);
     initialize_decompressor();
-    enum libdeflate_result result = libdeflate_deflate_decompress(decompressor,compressed_data.data(),compressed_data.size(),
+    enum libdeflate_result result = libdeflate_deflate_decompress(decompressor.value(),compressed_data.data(),compressed_data.size(),
     decompressed_data.data(),original_size,NULL);
     if(result == LIBDEFLATE_SUCCESS){
         return true;
@@ -90,8 +90,9 @@ bool GzipData::decompress(std::vector<std::byte>& decompressed_data) {
     }
 }
 void GzipData::initialize_decompressor() {
-    decompressor = libdeflate_alloc_decompressor();
-
+    if(!decompressor.has_value()){
+        decompressor = libdeflate_alloc_decompressor();
+    }
 }
 
 bool GzipData::readByte(std::ifstream& stream, std::byte& byte) {

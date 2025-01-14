@@ -7,6 +7,7 @@
 #include <vector>
 #include <array>
 #include <cstddef>
+#include <optional>
 #include <libdeflate.h>
 
 constexpr std::byte GZIP_ID1 = std::byte{0x1f};
@@ -45,6 +46,6 @@ class GzipData {
         std::vector<std::byte> compressed_data;
         std::array<std::byte, 4> crc32;
         std::array<std::byte, 4> isize;
-        struct libdeflate_decompressor *decompressor;
+        std::optional<struct libdeflate_decompressor*> decompressor;
 };
 #endif
