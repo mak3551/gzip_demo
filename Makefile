@@ -15,4 +15,4 @@ clean:
 	rm -f $(OBJECT) $(TARGET)
 rebuild: clean $(TARGET)
 test: $(TARGET)
-	./test.sh
+	test/test.sh
