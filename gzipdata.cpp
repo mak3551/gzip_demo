@@ -1,5 +1,6 @@
 #include "gzipdata.h"
 #include <cstdint>
+#include <new>
 
 GzipData::GzipData() : decompressor(std::nullopt), read_completed_flag(false) {}
 
@@ -65,7 +66,12 @@ GzipData::ErrorCode GzipData::readFile(const std::string& filename) {
         headersize += 2;
     }
     uint64_t compressed_data_size = filesize - headersize - 8;
-    compressed_data.resize(compressed_data_size);
+    try{
+        compressed_data.resize(compressed_data_size);
+    } catch (std::bad_alloc& bad_alloc_err) {
+        std::cerr << bad_alloc_err.what() << "\n";
+        return GzipData::ErrorCode::MEMORY_ALLOCATION_FAILED;
+    }
     if (!readBytes(gzip_file, compressed_data.data(), compressed_data_size)) {
         return ErrorCode::READ_ERROR;
     }
@@ -85,7 +91,12 @@ GzipData::ErrorCode GzipData::decompress(std::vector<std::byte>& decompressed_da
     if (isize.size() == 4) {
         original_size = *reinterpret_cast<uint32_t*>(isize.data());
     }
-    decompressed_data.resize(original_size);
+    try{
+        decompressed_data.resize(original_size);
+    } catch (std::bad_alloc& bad_alloc_err) {
+        std::cerr << bad_alloc_err.what() << "\n";
+        return GzipData::ErrorCode::MEMORY_ALLOCATION_FAILED;
+    }
     initialize_decompressor();
     enum libdeflate_result result = libdeflate_deflate_decompress(decompressor.value(),compressed_data.data(),compressed_data.size(),
         decompressed_data.data(),original_size,NULL);

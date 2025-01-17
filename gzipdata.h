@@ -28,7 +28,8 @@ class GzipData {
             UNSUPPORTED_EXTRA_FIELD = 3,
             READ_ERROR = 4,
             READ_UNCOMPLETE = 5,
-            DECOMPRESS_ERROR = 6
+            DECOMPRESS_ERROR = 6,
+            MEMORY_ALLOCATION_FAILED = 7
         };
         ErrorCode readFile(const std::string& filename);
         ErrorCode decompress(std::vector<std::byte>& decompressed_data);
