@@ -20,6 +20,7 @@ int main(int argc, char* argv[]) {
         std::cerr << "Error occurred when decompressing data." << std::endl;
         return 3;
     }
+    gzip_data.free_compressed_data();
     std::ofstream output_file(argv[2], std::ios::binary);
     if(!output_file) {
         std::cerr << "Error occurred when writing decompressed data to output file." << std::endl;

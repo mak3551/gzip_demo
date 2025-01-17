@@ -33,6 +33,7 @@ class GzipData {
         ErrorCode readFile(const std::string& filename);
         ErrorCode decompress(std::vector<std::byte>& decompressed_data);
         void initialize_decompressor();
+        void free_compressed_data();
     private:
         bool readByte(std::ifstream& stream, std::byte& byte);
         bool readBytes(std::ifstream& stream, std::byte* bytes, std::size_t size);

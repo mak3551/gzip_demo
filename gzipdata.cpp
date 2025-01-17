@@ -101,6 +101,11 @@ void GzipData::initialize_decompressor() {
     }
 }
 
+void GzipData::free_compressed_data(){
+    compressed_data.clear();
+    compressed_data.shrink_to_fit();
+}
+
 bool GzipData::readByte(std::ifstream& stream, std::byte& byte) {
     stream.read(reinterpret_cast<char*>(&byte), 1);
     return stream.good();
