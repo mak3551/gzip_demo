@@ -5,7 +5,12 @@ libdeflateを使ってgzipファイルの展開を実装してみました。
 ## コンパイル
 事前にlibdeflate-dev (UbuntuやDebianの場合)のインストールが必要です。
 ```
-$ g++ -o gunzip_demo gunzip_demo.cpp gzipdata.cpp -ldeflate
+$ make
+```
+
+## テスト
+```
+$ make test
 ```
 
 ## 実行
