@@ -1,11 +1,25 @@
 #include "gzipdata.h"
 #include <iostream>
 #include <fstream>
+#include <filesystem>
+
+constexpr uint64_t LIMIT_FILE_SIZE = 1610612736;
 
 int main(int argc, char* argv[]) {
     if (argc < 3) {
         std::cerr << "Usage: " << argv[0] << " input output" << std::endl;
         return 1;
+    }
+    uint64_t filesize_of_input;
+    try{
+        filesize_of_input = std::filesystem::file_size(argv[1]);
+    } catch (std::filesystem::filesystem_error& fserror) {
+        std::cerr << fserror.what() << std::endl;
+        return 5;
+    }
+    if(filesize_of_input > LIMIT_FILE_SIZE){
+        std::cerr << "This program cannot read a file whose size is over 1.5 GB." << std::endl;
+        return 6;
     }
     GzipData gzip_data;
     GzipData::ErrorCode status = gzip_data.readFile(std::string(argv[1]));
